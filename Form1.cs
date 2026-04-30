@@ -324,7 +324,6 @@ namespace SimplePaint
                         }
 
                         canvasBitmap.Save(saveFileDialog.FileName, format);
-                        MessageBox.Show("이미지가 성공적으로 저장되었습니다.", "저장 성공", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     catch (Exception ex)
                     {
