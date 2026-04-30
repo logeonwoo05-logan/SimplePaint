@@ -26,6 +26,9 @@ namespace SimplePaint
         private Color currentColor = Color.Black; // 현재 색상
         private int currentLineWidth = 2; // 현재 선 두께
 
+        private Panel canvasPanel;
+        private float zoomFactor = 1.0f;
+
 
 
 
@@ -41,6 +44,19 @@ namespace SimplePaint
             ResizeToolButtonImage(btnRectangle);
             ResizeToolButtonImage(btnCircle);
 
+            // 캔버스 패널 초기화 (스크롤바 제공)
+            canvasPanel = new Panel();
+            canvasPanel.Location = picCanvas.Location;
+            canvasPanel.Size = picCanvas.Size;
+            canvasPanel.AutoScroll = true;
+            canvasPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+
+            this.Controls.Remove(picCanvas);
+            picCanvas.Location = new Point(0, 0);
+            picCanvas.SizeMode = PictureBoxSizeMode.StretchImage; // 확대 축소를 위해
+            canvasPanel.Controls.Add(picCanvas);
+            this.Controls.Add(canvasPanel);
+
             // 캔버스 초기화
             canvasBitmap = new Bitmap(picCanvas.Width, picCanvas.Height);
             canvasGraphics = Graphics.FromImage(canvasBitmap);
@@ -54,6 +70,7 @@ namespace SimplePaint
             picCanvas.MouseDown += PicCanvas_MouseDown;
             picCanvas.MouseMove += PicCanvas_MouseMove;
             picCanvas.MouseUp += PicCanvas_MouseUp;
+            picCanvas.MouseWheel += PicCanvas_MouseWheel;
 
             // picCanvas가 다시 그려질 때 PicCanvas_Paint 함수를 실행하도록 연결
             picCanvas.Paint += PicCanvas_Paint;
@@ -108,10 +125,15 @@ namespace SimplePaint
             button.Padding = new Padding(4);
         }
 
+        private Point GetImagePoint(Point p)
+        {
+            return new Point((int)(p.X / zoomFactor), (int)(p.Y / zoomFactor));
+        }
+
         private void PicCanvas_MouseDown(object sender, MouseEventArgs e)
         {
             isDrawing = true;// 드래그 시작
-            startPoint = e.Location;  // 시작점 저장
+            startPoint = GetImagePoint(e.Location);  // 시작점 저장
 
         }
 
@@ -119,7 +141,7 @@ namespace SimplePaint
         {
             if (!isDrawing) return;
 
-            endPoint = e.Location;
+            endPoint = GetImagePoint(e.Location);
 
             picCanvas.Invalidate();
         }
@@ -128,7 +150,7 @@ namespace SimplePaint
         private void PicCanvas_MouseUp(object sender, MouseEventArgs e)
         {
             if (!isDrawing) return; // 그림 그리기와 상관 없는 마우스 움직임은 무시
-            isDrawing = false; endPoint = e.Location;
+            isDrawing = false; endPoint = GetImagePoint(e.Location);
             // 드래그 종료
             // 실제 비트맵에 도형 그리기 (확정)
             using (Pen pen = new Pen(currentColor, currentLineWidth))
@@ -141,6 +163,7 @@ namespace SimplePaint
         private void PicCanvas_Paint(object sender, PaintEventArgs e)
         {
             if (!isDrawing) return;
+            e.Graphics.ScaleTransform(zoomFactor, zoomFactor); // 확대 비율 반영
             // 점선 펜 (미리보기용)
             using (Pen previewPen = new Pen(currentColor, currentLineWidth))
             {
@@ -218,6 +241,34 @@ namespace SimplePaint
             currentLineWidth = trbLineWidth.Value;
         }
 
+        private void PicCanvas_MouseWheel(object? sender, MouseEventArgs e)
+        {
+            if (ModifierKeys.HasFlag(Keys.Control))
+            {
+                if (e.Delta > 0)
+                {
+                    zoomFactor *= 1.1f;
+                }
+                else if (e.Delta < 0)
+                {
+                    zoomFactor /= 1.1f;
+                }
+
+                zoomFactor = Math.Max(0.1f, Math.Min(10.0f, zoomFactor));
+
+                if (canvasBitmap != null)
+                {
+                    picCanvas.Width = (int)(canvasBitmap.Width * zoomFactor);
+                    picCanvas.Height = (int)(canvasBitmap.Height * zoomFactor);
+                }
+
+                if (e is HandledMouseEventArgs he)
+                {
+                    he.Handled = true;
+                }
+            }
+        }
+
         private void btnOpenFile_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -230,9 +281,12 @@ namespace SimplePaint
                     try
                     {
                         Bitmap loadedBitmap = new Bitmap(openFileDialog.FileName);
-                        canvasBitmap = new Bitmap(loadedBitmap, picCanvas.Width, picCanvas.Height);
+                        canvasBitmap = new Bitmap(loadedBitmap); // 원본 크기 그대로 사용
                         canvasGraphics = Graphics.FromImage(canvasBitmap);
 
+                        zoomFactor = 1.0f; // 불러올 때 원래 배율로
+                        picCanvas.Width = canvasBitmap.Width;
+                        picCanvas.Height = canvasBitmap.Height;
                         picCanvas.Image = canvasBitmap;
                         picCanvas.Invalidate();
                     }
