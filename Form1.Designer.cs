@@ -36,16 +36,16 @@
             btnLine = new Button();
             grbColor = new GroupBox();
             cmbColor = new ComboBox();
-            groupBox3 = new GroupBox();
+            grbLineWidth = new GroupBox();
             trbLineWidth = new TrackBar();
             btnOpenFile = new Button();
             btnSaveFile = new Button();
-            pictureBox1 = new PictureBox();
+            picCanvas = new PictureBox();
             grbSelect.SuspendLayout();
             grbColor.SuspendLayout();
-            groupBox3.SuspendLayout();
+            grbLineWidth.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)trbLineWidth).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)picCanvas).BeginInit();
             SuspendLayout();
             // 
             // lblAppName
@@ -73,6 +73,7 @@
             // 
             // btnCircle
             // 
+            btnCircle.Font = new Font("맑은 고딕", 11F);
             btnCircle.Image = (Image)resources.GetObject("btnCircle.Image");
             btnCircle.ImageAlign = ContentAlignment.TopCenter;
             btnCircle.Location = new Point(326, 59);
@@ -85,6 +86,7 @@
             // 
             // btnRectangle
             // 
+            btnRectangle.Font = new Font("맑은 고딕", 11F);
             btnRectangle.Image = (Image)resources.GetObject("btnRectangle.Image");
             btnRectangle.ImageAlign = ContentAlignment.TopCenter;
             btnRectangle.Location = new Point(166, 57);
@@ -127,15 +129,15 @@
             cmbColor.Size = new Size(214, 40);
             cmbColor.TabIndex = 0;
             // 
-            // groupBox3
+            // grbLineWidth
             // 
-            groupBox3.Controls.Add(trbLineWidth);
-            groupBox3.Location = new Point(741, 176);
-            groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(330, 200);
-            groupBox3.TabIndex = 2;
-            groupBox3.TabStop = false;
-            groupBox3.Text = "선 두께";
+            grbLineWidth.Controls.Add(trbLineWidth);
+            grbLineWidth.Location = new Point(741, 176);
+            grbLineWidth.Name = "grbLineWidth";
+            grbLineWidth.Size = new Size(330, 200);
+            grbLineWidth.TabIndex = 2;
+            grbLineWidth.TabStop = false;
+            grbLineWidth.Text = "선 두께";
             // 
             // trbLineWidth
             // 
@@ -166,24 +168,24 @@
             btnSaveFile.Text = "저장";
             btnSaveFile.UseVisualStyleBackColor = false;
             // 
-            // pictureBox1
+            // picCanvas
             // 
-            pictureBox1.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox1.Location = new Point(18, 406);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(1381, 732);
-            pictureBox1.TabIndex = 4;
-            pictureBox1.TabStop = false;
+            picCanvas.BorderStyle = BorderStyle.FixedSingle;
+            picCanvas.Location = new Point(18, 406);
+            picCanvas.Name = "picCanvas";
+            picCanvas.Size = new Size(1381, 732);
+            picCanvas.TabIndex = 4;
+            picCanvas.TabStop = false;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(14F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1424, 1168);
-            Controls.Add(pictureBox1);
+            Controls.Add(picCanvas);
             Controls.Add(btnSaveFile);
             Controls.Add(btnOpenFile);
-            Controls.Add(groupBox3);
+            Controls.Add(grbLineWidth);
             Controls.Add(grbColor);
             Controls.Add(grbSelect);
             Controls.Add(lblAppName);
@@ -191,10 +193,10 @@
             Text = "Simple Paint v1.0";
             grbSelect.ResumeLayout(false);
             grbColor.ResumeLayout(false);
-            groupBox3.ResumeLayout(false);
-            groupBox3.PerformLayout();
+            grbLineWidth.ResumeLayout(false);
+            grbLineWidth.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)trbLineWidth).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picCanvas).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -204,7 +206,7 @@
         private Label lblAppName;
         private GroupBox grbSelect;
         private GroupBox grbColor;
-        private GroupBox groupBox3;
+        private GroupBox grbLineWidth;
         private Button btnOpenFile;
         private Button btnLine;
         private Button btnSaveFile;
@@ -212,6 +214,6 @@
         private Button btnRectangle;
         private ComboBox cmbColor;
         private TrackBar trbLineWidth;
-        private PictureBox pictureBox1;
+        private PictureBox picCanvas;
     }
 }
