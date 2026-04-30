@@ -79,6 +79,9 @@ namespace SimplePaint
             trbLineWidth.Value = 5;
             trbLineWidth.ValueChanged += trbLineWidth_ValueChanged;
 
+            // 열기, 저장 버튼 이벤트 연결
+            btnOpenFile.Click += btnOpenFile_Click;
+            btnSaveFile.Click += btnSaveFile_Click;
         }
 
         private static void ResizeToolButtonImage(Button button)
@@ -213,6 +216,68 @@ namespace SimplePaint
         private void trbLineWidth_ValueChanged(object sender, EventArgs e)
         {
             currentLineWidth = trbLineWidth.Value;
+        }
+
+        private void btnOpenFile_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Title = "이미지 열기";
+                openFileDialog.Filter = "Image Files|*.png;*.jpg;*.jpeg;*.bmp|All Files|*.*";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        Bitmap loadedBitmap = new Bitmap(openFileDialog.FileName);
+                        canvasBitmap = new Bitmap(loadedBitmap, picCanvas.Width, picCanvas.Height);
+                        canvasGraphics = Graphics.FromImage(canvasBitmap);
+
+                        picCanvas.Image = canvasBitmap;
+                        picCanvas.Invalidate();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("이미지를 여는 중 오류가 발생했습니다: " + ex.Message, "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        private void btnSaveFile_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Title = "이미지 저장";
+                saveFileDialog.Filter = "PNG Image|*.png|JPEG Image|*.jpg|Bitmap Image|*.bmp";
+                saveFileDialog.DefaultExt = "png";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        ImageFormat format = ImageFormat.Png;
+                        string ext = System.IO.Path.GetExtension(saveFileDialog.FileName).ToLower();
+                        switch (ext)
+                        {
+                            case ".jpg":
+                            case ".jpeg":
+                                format = ImageFormat.Jpeg;
+                                break;
+                            case ".bmp":
+                                format = ImageFormat.Bmp;
+                                break;
+                        }
+
+                        canvasBitmap.Save(saveFileDialog.FileName, format);
+                        MessageBox.Show("이미지가 성공적으로 저장되었습니다.", "저장 성공", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("이미지를 저장하는 중 오류가 발생했습니다: " + ex.Message, "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
         }
 
 
